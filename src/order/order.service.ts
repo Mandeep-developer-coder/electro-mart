@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Order } from './schema/order.schema';
 import { OrderDocument } from './schema/order.schema';
+import { Payment } from './schema/payment.schema';
+import { PaymentDocument } from './schema/payment.schema';
 import { Types } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import Twilio from 'twilio';
@@ -21,6 +23,7 @@ export class OrderService {
   public stripe: any;
   constructor(
     @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
+    @InjectModel(Payment.name) private paymentModel: Model<PaymentDocument>,
     private configService: ConfigService,
     @InjectModel(User.name) private userModel: Model<userDocument>,
     @InjectModel(Rating.name) private ratingModel: Model<RatingDocument>,
@@ -89,6 +92,20 @@ export class OrderService {
         }
       } 
     if (order) {
+      try {
+        await this.paymentModel.create({
+          orderId: order._id,
+          userId: order.userId,
+          amount: order.totalAmount,
+          currency: 'inr',
+          paymentMethod: order.paymentMethod,
+          status: order.paymentStatus,
+          paymentIntentId: order.paymentIntentId,
+        });
+      } catch (err) {
+        console.error('Failed to create payment record:', err);
+      }
+
       const user = await this.userModel.findOne({ _id: req.user.userId });
       const phone = user?.phone;
       try {
@@ -119,7 +136,14 @@ export class OrderService {
     order.paymentStatus = 'PAID';
     await order.save();
 
-    // console.log(`Order ${order._id} marked as PAID`);
+    try {
+      await this.paymentModel.findOneAndUpdate(
+        { paymentIntentId },
+        { status: 'PAID' }
+      );
+    } catch (err) {
+      console.error('Failed to update payment record status:', err);
+    }
   }
   async getUserOrders(req) {
     const userId = new Types.ObjectId(req.user.userId);

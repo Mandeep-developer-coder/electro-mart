@@ -4,6 +4,8 @@ import { User } from 'src/user/schema/user.schema';
 import { userDocument } from 'src/user/schema/user.schema';
 import { Order } from 'src/order/schema/order.schema';
 import { OrderDocument } from 'src/order/schema/order.schema';
+import { Payment } from 'src/order/schema/payment.schema';
+import { PaymentDocument } from 'src/order/schema/payment.schema';
 import { Model } from 'mongoose';
 import { Types } from 'mongoose';
 import { UserRole } from 'src/user/enum/user-role.enum';
@@ -16,6 +18,7 @@ export class AdminService {
   constructor(
     @InjectModel(User.name) private userModel: Model<userDocument>,
     @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
+    @InjectModel(Payment.name) private paymentModel: Model<PaymentDocument>,
      @InjectModel(  Product.name) private productModel: Model<  ProductDocument>,
   ) {}
   async getCustomers(req) {
@@ -104,6 +107,15 @@ export class AdminService {
     }
     if(orderStatus=="DELIVERED"){
     updatedOrder.paymentStatus="PAID"
+
+    try {
+      await this.paymentModel.findOneAndUpdate(
+        { orderId: updatedOrder._id },
+        { status: 'PAID' }
+      );
+    } catch (err) {
+      console.error('Failed to update payment status on delivery:', err);
+    }
 
     for(const item of updatedOrder.items){
        const productId=new Types.ObjectId(item.productId)

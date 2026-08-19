@@ -111,15 +111,15 @@ export class AuthService {
                 };
             }
             const otp = Math.floor(100000 + Math.random() * 900000).toString();
-            console.log(`🔑 [OTP Debug] Generated OTP for ${email}: ${otp}`);
+            console.log(` [OTP Debug] Generated OTP for ${email}: ${otp}`);
             const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
             await this.otpService.saveOtp({ userId: user._id, otp, expiresAt });
 
             try {
                 await this.mailService.sendOtpMail(email, otp);
             } catch (mailError) {
-                console.warn(`⚠️ SMTP error occurred while sending mail to ${email}:`, mailError.message);
-                console.warn(`👉 You can use the logged OTP above for development verification.`);
+                console.warn(` SMTP error occurred while sending mail to ${email}:`, mailError.message);
+                console.warn(` You can use the logged OTP above for development verification.`);
             }
 
             return { success: true };

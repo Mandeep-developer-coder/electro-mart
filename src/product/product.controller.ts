@@ -9,7 +9,7 @@ import {
   Body,
   UseFilters,
   UploadedFiles,
-  Req,Patch,
+  Req, Patch,
   UseInterceptors,
   Delete
 } from '@nestjs/common';
@@ -31,7 +31,7 @@ export class ProductController {
     @InjectModel(Product.name)
     private readonly productModel: Model<ProductDocument>,
     private readonly productService: ProductService,
-  ) {}
+  ) { }
 
   @Post('seed')
   async seedProducts() {
@@ -70,9 +70,12 @@ export class ProductController {
   //       .populate('addedBy', 'name email role');
   //   }
   @Get()
-  getProducts(@Query('page') page: string, @Query('limit') limit: string) {
-    return this.productService.getProducts(Number(page), Number(limit));
-    return;
+  getProducts(
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+    @Query('category') category?: string,
+  ) {
+    return this.productService.getProducts(Number(page), Number(limit), category);
   }
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
@@ -92,31 +95,29 @@ export class ProductController {
   editProduct(@Param('id') id: string, @Body() data) {
     return this.productService.editProduct(id, data);
   }
-  @UseGuards(JwtGuard,RolesGuard)
+  @UseGuards(JwtGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   @Post('add-products')
-  @UseInterceptors(FilesInterceptor("images",10,{
-    storage:diskStorage({
-      destination:"./uploads",
-      filename:(req,file,cb)=>{
-        const fileName=Date.now()+extname(file.originalname)
-        cb(null,fileName)
+  @UseInterceptors(FilesInterceptor("images", 10, {
+    storage: diskStorage({
+      destination: "./uploads",
+      filename: (req, file, cb) => {
+        const fileName = Date.now() + extname(file.originalname)
+        cb(null, fileName)
       }
     })
   }))
-  addProducts(@Body() data,@Req() req, @UploadedFiles() files :Express.Multer.File[]){
-  return this.productService.addProduct(data,req,files)
+  addProducts(@Body() data, @Req() req, @UploadedFiles() files: Express.Multer.File[]) {
+    return this.productService.addProduct(data, req, files)
   }
-  @UseGuards(JwtGuard)
   @Get('getProductById/:id')
-  getProductById(@Param('id') id:string){
+  getProductById(@Param('id') id: string) {
     return this.productService.getProductById(id)
 
   }
-  
-  @UseGuards(JwtGuard)
+
   @Get('getProducts')
-  getProduct(){
+  getProduct() {
     return this.productService.getProduct()
   }
 

@@ -14,10 +14,29 @@ export class ProductService {
     @InjectModel(Product.name)
     private readonly productModel: Model<ProductDocument>
   ) { }
-  async getProducts(page, limit) {
+  async getProducts(page, limit, category?: string) {
     const skip = (page - 1) * limit
-    const products = await this.productModel.find().skip(skip).limit(limit)
-    const total = await this.productModel.countDocuments();
+    let filter: any = {};
+    if (category) {
+      const lowerCat = category.toLowerCase();
+      if (lowerCat === 'accessories') {
+        filter = {
+          category: {
+            $nin: [
+              /^smartphones$/i,
+              /^laptops$/i,
+              /^smartphone$/i,
+              /^laptop$/i
+            ]
+          }
+        };
+      } else {
+        const categoryBase = lowerCat.endsWith('s') ? lowerCat.slice(0, -1) : lowerCat;
+        filter = { category: { $regex: new RegExp(`^${categoryBase}s?$`, 'i') } };
+      }
+    }
+    const products = await this.productModel.find(filter).skip(skip).limit(limit)
+    const total = await this.productModel.countDocuments(filter);
 
     return {
       data: products,
