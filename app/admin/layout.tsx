@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { FaTachometerAlt, FaBoxOpen, FaUsers, FaShippingFast, FaUser, FaSignOutAlt } from "react-icons/fa";
+import { FaTachometerAlt, FaBoxOpen, FaUsers, FaShippingFast, FaUser, FaSignOutAlt, FaChartBar } from "react-icons/fa";
 import { logout } from "../redux/authSlice";
 import { Dispatch } from "react";
 import { RootState,AppDispatch } from "../redux/store";
@@ -20,6 +20,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: "Add Products", icon: <FaBoxOpen />, href: "/admin/addProducts" },
      { label: "Products", icon: <FaBoxOpen />, href: "/admin/products" },
     { label: "Customers", icon: <FaUsers />, href: "/admin/customers" },
+    { label: "Reports", icon: <FaChartBar />, href: "/admin/reports" },
     // { label: "Shipping", icon: <FaShippingFast />, href: "/admin/shipping" },
   ];
 

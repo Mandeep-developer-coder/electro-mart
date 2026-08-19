@@ -74,7 +74,11 @@ const productSlice = createSlice({
         fetchProducts.fulfilled,
         (state, action: PayloadAction<{ data: Product[]; page: number; totalPages: number,currentPage:number }>) => {
           state.loading = false;
-          state.items.push(...action.payload.data)
+          if (action.payload.currentPage === 1) {
+            state.items = action.payload.data;
+          } else {
+            state.items.push(...action.payload.data);
+          }
           state.page=action.payload.currentPage
           state.totalPage=action.payload.totalPages
         }

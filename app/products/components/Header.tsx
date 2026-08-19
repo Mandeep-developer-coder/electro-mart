@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 export const products = [
   "/images/earbud.jpeg",
   "/images/gadgets.jpg",
@@ -102,7 +103,9 @@ export default function Header() {
             />
             <h3 className="text-lg font-bold">{item.title}</h3>
             <p className="text-sm text-gray-600 mt-2">{item.description}</p>
-            <Button className="mt-4">{item.buttonText}</Button>
+            <Link href={item.link}>
+              <Button className="mt-4">{item.buttonText}</Button>
+            </Link>
           </div>
         ))}
       </section>

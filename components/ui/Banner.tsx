@@ -19,9 +19,9 @@ export default function Banner() {
             <Button className="bg-white text-blue-600">
               Shop Now
             </Button>
-            <Button className="bg-blue-800 text-white">
+            {/* <Button className="bg-blue-800 text-white">
               View Details
-            </Button>
+            </Button> */}
           </div>
         </div>
 

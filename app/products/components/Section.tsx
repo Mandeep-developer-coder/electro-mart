@@ -5,25 +5,25 @@ import Image from "next/image";
 import { RootState, AppDispatch } from "@/app/redux/store";
 import { fetchProducts } from "@/app/redux/products/productThunk";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 
 export default function Section() {
     const router=useRouter()
+  const searchParams = useSearchParams();
+  const category = searchParams.get("category") || "";
   const dispatch = useDispatch<AppDispatch>();
   const { page, items, loading, totalPage } = useSelector(
     (state: RootState) => state.products
   );
 
   useEffect(() => {
-     if (items.length === 0) {
-      dispatch(fetchProducts({ page: 1, limit: 2}));
-    }
-  }, [dispatch]);
+    dispatch(fetchProducts({ page: 1, limit: 2, category }));
+  }, [dispatch, category]);
 
   const fetchData = () => {
     if (page < totalPage) {
-      dispatch(fetchProducts({ page: page + 1, limit: 2}));
+      dispatch(fetchProducts({ page: page + 1, limit: 2, category }));
     }
   };
 

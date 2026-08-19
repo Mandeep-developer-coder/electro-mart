@@ -38,7 +38,7 @@ export default function Cart() {
       </div>
     )
   }
-  const item=items.filter((i)=>i.stock!=0)
+  const item = items.filter((i) => i.stock != 0)
 
   const Subtotal = item.reduce(
     (acc, item) => acc + item.quantity * item.price,
@@ -51,7 +51,7 @@ export default function Cart() {
 
   return (
     <div className="flex flex-col md:flex-row gap-4 p-4">
-      
+
       {/* Cart Items */}
       <div className="flex flex-col gap-3 flex-1">
         <h1 className="font-bold text-xl">Shopping Cart</h1>
@@ -144,7 +144,7 @@ export default function Cart() {
             </h1>
           </div>
 
-          <div className="mt-5 flex gap-2">
+          {/* <div className="mt-5 flex gap-2">
             <input
               type="text"
               placeholder="Promo code"
@@ -153,7 +153,7 @@ export default function Cart() {
             <Button className="text-black border-2 hover:bg-white bg-white px-4">
               Apply
             </Button>
-          </div>
+          </div> */}
 
           <button
             onClick={() => router.push("/checkout")}

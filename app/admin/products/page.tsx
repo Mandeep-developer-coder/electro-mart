@@ -31,6 +31,28 @@ export default function Products() {
   
   };
 
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (!confirm("Are you sure you want to delete this product?")) return;
+
+    try {
+      const res = await fetch(`http://localhost:3005/products/delete-product/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setProducts((prev) => prev.filter((item) => item._id !== id));
+      } else {
+        alert(data.msg || "Failed to delete product");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {products.map((item, index) => (
@@ -40,8 +62,13 @@ export default function Products() {
         >
       
           <i
-            className="fa-regular fa-pen-to-square text-green-600 hover:text-green-800 absolute top-4 right-4 cursor-pointer"
+            className="fa-regular fa-pen-to-square text-green-600 hover:text-green-800 absolute top-4 right-12 cursor-pointer text-lg"
             onClick={(e) => handleEdit(e, item)}
+          ></i>
+
+          <i
+            className="fa-regular fa-trash-can text-red-600 hover:text-red-800 absolute top-4 right-4 cursor-pointer text-lg"
+            onClick={(e) => handleDelete(e, item._id)}
           ></i>
 
           <img
